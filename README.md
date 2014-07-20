@@ -1,7 +1,7 @@
 Robotics.js
 ===========
 
-Framework in Javascript of the Robotic Toolbox in MATLAB created by Peter Corke.
+Robotics.js is a Javascript framework of the MATLAB Robotic Toolbox created by Peter Corke.
 
 Do you want to learn Robotic in web platform? 
 Maybe you have studied Robotics, but you need some programs that are not easily affordable.
