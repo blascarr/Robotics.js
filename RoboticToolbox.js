@@ -87,7 +87,8 @@
 
 			this.m	=	[];			//dynamic: link mass
 			this.r	=	new THREE.Vector3();			//dynamic: link COG wrt link coordinate frame 3x1
-			this.I	=	new THREE.Matrix3(0,0,0,0,0,0,0,0,0);			//dynamic: link inertia matrix, symmetric 3x3, about link COG.
+			this.I	=	new THREE.Matrix3();			//dynamic: link inertia matrix, symmetric 3x3, about link COG.
+			this.I.set(0,0,0,0,0,0,0,0,0);
 			this.B	=	[];			//dynamic: link viscous friction (motor referred)
 			this.Tc	=	[0,0];		//dynamic: link Coulomb friction
 
@@ -141,7 +142,8 @@
 						this.m=arguments[5];
 						this.r = new THREE.Vector3(arguments[6],arguments[7],arguments[8]);
 						//Inertia matrix (Ixx,Iyy,Izz,Ixy,Ixz,Iyz)
-						this.I = new THREE.Matrix3(arguments[9],arguments[12],arguments[13],arguments[12],arguments[10],arguments[14],arguments[13],arguments[14],arguments[11]);
+						this.I = new THREE.Matrix3();
+						this.I.set(arguments[9],arguments[12],arguments[13],arguments[12],arguments[10],arguments[14],arguments[13],arguments[14],arguments[11]);
 	                	
 	                	if (arguments.length > 14){
 	                        this.Jm = arguments[15];
@@ -166,7 +168,8 @@
 	                	//we know nothing about the dynamics
 	                	this.m = [];
 	                    this.r = new THREE.Vector3();
-	                    this.I = new THREE.Matrix3(0,0,0,0,0,0,0,0,0);
+	                    this.I = new THREE.Matrix3();
+			    this.I.set(0,0,0,0,0,0,0,0,0);
 	                    this.Jm = [];
 	                    tis.G = 0;
 	                    this.B = 0;
@@ -343,10 +346,12 @@
         } else if (M instanceof Array){
         	//Matrix definition by diagonal elements
         	if (M.length == 3 && ArrayNum(M)){
-        		this.I = new THREE.Matrix3(M[0],0,0,		0,M[1],0,		0,0,M[2]);
+        		this.I = new THREE.Matrix3();
+			this.I.set(M[0],0,0,		0,M[1],0,		0,0,M[2]);
         	}else if (M.length == 6 && ArrayNum(M)){
            		//Matrix definition by I=[Ixx,Iyy,Izz,Ixy,Ixz,Iyz]
-        		this.I = new THREE.Matrix3(M[0],M[3],M[4],M[3],M[1],M[5],M[4],M[5],M[2]); 
+        		this.I = new THREE.Matrix3(); 
+			this.I.set(M[0],M[3],M[4],M[3],M[1],M[5],M[4],M[5],M[2]);
         	}else{
         		console.error('RTB:Link:badarg', 'must set I to 3-vector, 6-vector');
         	}
@@ -414,11 +419,13 @@
             if (this.mdh == 0){
                 // standard DH
                 
-                T =new THREE.Matrix4(ct , -st*ca , st*sa , this.a*ct , st , ct*ca , -ct*sa , this.a*st , 0 , sa , ca , d,0,0,0,1);
+                T =new THREE.Matrix4();
+		T.set(ct , -st*ca , st*sa , this.a*ct , st , ct*ca , -ct*sa , this.a*st , 0 , sa , ca , d,0,0,0,1);
             }else{
                 // modified DH
                 
-                T =new THREE.Matrix4(ct , -st , 0 , this.a , st*ca , ct*ca , -sa, -sa*d , st*sa , ct*sa , ca ,ca*d ,0,0,0,1);
+                T =new THREE.Matrix4();
+		T.set(ct , -st , 0 , this.a , st*ca , ct*ca , -sa, -sa*d , st*sa , ct*sa , ca ,ca*d ,0,0,0,1);
             } 
             return T;
         	
@@ -758,7 +765,8 @@
             //% check that robot object has dynamic parameters for each link
             for (var i = 0; i < n; i++) {
                 var r_aux= new THREE.Vector3();
-                var m_aux= new THREE.Matrix3(0,0,0,0,0,0,0,0,0);
+                var m_aux= new THREE.Matrix3();
+		m_aux.set(0,0,0,0,0,0,0,0,0);
                 if (this.links[i].r.equals(r_aux) || this.links[i].m ==0 || compareArray(this.links[i].I.elements,m_aux.elements)){
                     console.error('SerialLink.rne :badarg. Dynamic parameters (m, r, I) not set in link '+i);
                 }
@@ -927,7 +935,8 @@
 		LinkOptions.prototype.B = 0;
 		LinkOptions.prototype.Tc = [0, 0];
 		LinkOptions.prototype.Jm = [];
-		LinkOptions.prototype.I = new THREE.Matrix3(0,0,0,0,0,0,0,0,0);
+		LinkOptions.prototype.I = new THREE.Matrix3();
+		LinkOptions.prototype.I-set(0,0,0,0,0,0,0,0,0);
 		LinkOptions.prototype.m = [];
 		LinkOptions.prototype.r = new THREE.Vector3();
 		LinkOptions.prototype.offset = 0;
